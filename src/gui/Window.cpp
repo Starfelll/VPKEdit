@@ -35,6 +35,7 @@
 #include <QTimer>
 #include <steampp/steampp.h>
 #include <vpkpp/vpkpp.h>
+#include <icu.h>
 
 #include <Version.h>
 
@@ -188,6 +189,7 @@ Window::Window(QWidget* parent)
 		this->setProperties();
 	});
 	this->setPropertiesAction->setDisabled(true);
+	this->packFileOptions.characterEncoding = ucnv_getDefaultName();
 
 	// Options menu
 	auto* optionsMenu = this->menuBar()->addMenu(tr("Options"));
@@ -1549,11 +1551,11 @@ void Window::closeEvent(QCloseEvent* event) {
 }
 
 bool Window::loadDir(const QString& path) {
-	return this->loadPackFile(path, Folder::open(path.toLocal8Bit().constData()));
+	return this->loadPackFile(path, Folder::open(path.toLocal8Bit().constData(), nullptr, this->packFileOptions.characterEncoding));
 }
 
 bool Window::loadPackFile(const QString& path) {
-	return this->loadPackFile(path, PackFile::open(path.toLocal8Bit().constData()));
+	return this->loadPackFile(path, PackFile::open(path.toLocal8Bit().constData(), nullptr, this->packFileOptions.characterEncoding));
 }
 
 bool Window::loadPackFile(const QString& path, std::unique_ptr<vpkpp::PackFile>&& newPackFile) {

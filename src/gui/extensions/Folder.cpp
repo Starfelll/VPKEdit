@@ -7,9 +7,10 @@
 using namespace sourcepp;
 using namespace vpkpp;
 
-std::unique_ptr<PackFile> Folder::open(const std::string& path, const EntryCallback& callback) {
+std::unique_ptr<PackFile> Folder::open(const std::string& path, const EntryCallback& callback, const std::string& characterEncoding) {
 	auto* folder = new Folder{path};
 	std::unique_ptr<PackFile> packFile{folder};
+	packFile->setCharacterEncoding(characterEncoding);
 
 	std::error_code ec;
 	for (const auto& dirEntry : std::filesystem::recursive_directory_iterator{path, std::filesystem::directory_options::skip_permission_denied, ec}) {
