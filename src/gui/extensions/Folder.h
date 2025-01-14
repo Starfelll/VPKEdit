@@ -5,7 +5,7 @@
 class Folder : public vpkpp::PackFileReadOnly {
 public:
 	/// Open a folder
-	[[nodiscard]] static std::unique_ptr<PackFile> open(const std::string& path, const EntryCallback& callback = nullptr, const std::string& charset = "");
+	[[nodiscard]] static std::unique_ptr<PackFile> open(const std::string& path, const EntryCallback& callback = nullptr, const std::string& characterEncoding = "");
 
 	static constexpr inline std::string_view GUID = "7EC88CB090BC496DB5C68149F0A7E254";
 

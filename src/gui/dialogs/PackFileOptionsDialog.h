@@ -16,7 +16,7 @@ struct PackFileOptions {
 	unsigned int vpk_version = 2;
 	bool vpk_saveSingleFile = false;
 	unsigned int vpk_chunkSize = vpkpp::VPK_DEFAULT_CHUNK_SIZE;
-	std::string charset;
+	std::string characterEncoding;
 };
 
 class PackFileOptionsDialog : public QDialog {
