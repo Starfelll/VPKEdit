@@ -5,7 +5,7 @@
 class SingleFile : public Folder {
 public:
 	/// Open a previewable file
-	[[nodiscard]] static std::unique_ptr<PackFile> open(const std::string& path, const EntryCallback& callback = nullptr);
+	[[nodiscard]] static std::unique_ptr<PackFile> open(const std::string& path, const EntryCallback& callback = nullptr, const std::string& charset = "");
 
 	static constexpr inline std::string_view GUID = "13DBA85EDC294BA6A6979EAF071246DE";
 
