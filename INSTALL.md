@@ -67,3 +67,9 @@ There are two ways of *installing* VPKEdit specific to the following distros:
 VPKEdit is on the Arch User Repository thanks to [@HurricanePootis](https://github.com/HurricanePootis).
 Please consult the [Arch Wiki](https://wiki.archlinux.org/title/Arch_User_Repository) for more information,
 as I don't use Arch Linux personally and don't know how that system works. (I use Debian btw)
+
+#### NixOS:
+
+VPKEdit is available from Nixpkgs unstable thanks to [@Seraphim Pardee](https://github.com/SeraphimRP).
+Add it to your system by placing `vpkedit` in the appropriate `environment.systemPackages = with pkgs; [];` section 
+in your Nix configuration. If you want to use it temporarily, run `nix-shell -p vpkedit` then `vpkedit` (for gui) or `vpkeditcli`.

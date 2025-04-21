@@ -92,6 +92,9 @@ public:
 		".pop", // Team Fortress 2
 		".edt", // Synergy
 		".set", // Titanfall & Apex Legends
+		".scr", ".dlg", ".lip", ".vfe", // Vampire: The Masquerade - Bloodlines
+		".tbl", // Red Faction
+		".vint_doc", ".vint_proj", // Saints Row 2
 	};
 
 	TextPreview(FileViewer* fileViewer_, Window* window_, QWidget* parent = nullptr);

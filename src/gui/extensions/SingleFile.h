@@ -123,6 +123,13 @@ private:
 	VPKPP_REGISTER_PACKFILE_OPEN(".pop", &SingleFile::open);
 	VPKPP_REGISTER_PACKFILE_OPEN(".edt", &SingleFile::open);
 	VPKPP_REGISTER_PACKFILE_OPEN(".set", &SingleFile::open);
+	VPKPP_REGISTER_PACKFILE_OPEN(".scr", &SingleFile::open);
+	VPKPP_REGISTER_PACKFILE_OPEN(".dlg", &SingleFile::open);
+	VPKPP_REGISTER_PACKFILE_OPEN(".lip", &SingleFile::open);
+	VPKPP_REGISTER_PACKFILE_OPEN(".vfe", &SingleFile::open);
+	VPKPP_REGISTER_PACKFILE_OPEN(".tbl", &SingleFile::open);
+	VPKPP_REGISTER_PACKFILE_OPEN(".vint_doc", &SingleFile::open);
+	VPKPP_REGISTER_PACKFILE_OPEN(".vint_proj", &SingleFile::open);
 
 	// Textures
 	VPKPP_REGISTER_PACKFILE_OPEN(".tga", &SingleFile::open);
@@ -142,5 +149,7 @@ private:
 	VPKPP_REGISTER_PACKFILE_OPEN(".pgm", &SingleFile::open);
 	VPKPP_REGISTER_PACKFILE_OPEN(".svg", &SingleFile::open);
 	VPKPP_REGISTER_PACKFILE_OPEN(".ppl", &SingleFile::open);
+	VPKPP_REGISTER_PACKFILE_OPEN(".tth", &SingleFile::open);
+	VPKPP_REGISTER_PACKFILE_OPEN(".ttz", &SingleFile::open);
 	VPKPP_REGISTER_PACKFILE_OPEN(".vtf", &SingleFile::open);
 };

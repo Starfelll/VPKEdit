@@ -91,6 +91,9 @@ Window::Window(QWidget* parent)
 	this->createEmptyMenu->addAction(this->style()->standardIcon(QStyle::SP_FileIcon), "VPK", [this] {
 		this->newVPK(false);
 	});
+	this->createEmptyMenu->addAction(this->style()->standardIcon(QStyle::SP_FileIcon), "VPK (V:TMB)", [this] {
+		this->newVPK_VTMB(false);
+	});
 	this->createEmptyMenu->addAction(this->style()->standardIcon(QStyle::SP_FileIcon), "WAD3", [this] {
 		this->newWAD3(false);
 	});
@@ -113,6 +116,9 @@ Window::Window(QWidget* parent)
 	});
 	this->createFromDirMenu->addAction(this->style()->standardIcon(QStyle::SP_FileIcon), "VPK", [this] {
 		this->newVPK(true);
+	});
+	this->createFromDirMenu->addAction(this->style()->standardIcon(QStyle::SP_FileIcon), "VPK (V:TMB)", [this] {
+		this->newVPK_VTMB(true);
 	});
 	this->createFromDirMenu->addAction(this->style()->standardIcon(QStyle::SP_FileIcon), "WAD3", [this] {
 		this->newWAD3(true);
@@ -219,20 +225,23 @@ Window::Window(QWidget* parent)
 	auto* languageMenuGroup = new QActionGroup(languageMenu);
 	languageMenuGroup->setExclusive(true);
 	const QVector<QPair<QString, QString>> languageToLocaleMapping = {
-			{tr("System Language"), ""},
-			{"", ""}, // Separator
-			{u8"Bosanski",           "bs_BA"},
-			{u8"简体中文",             "zh_CN"},
-			{u8"Nederlands",         "nl"},
-			{u8"English",            "en"},
-			{u8"日本語",              "ja"},
-			{u8"한국인",              "ko"},
-			{u8"Italiano",           "it"},
-			{u8"Polski",             "pl"},
-			{u8"Português (Brasil)", "pt_BR"},
-			{u8"Español",            "es"},
-			{u8"Svenska",            "sv"},
-			{u8"Русский",            "ru_RU"},
+		{tr("System Language"), ""},
+		{"", ""}, // Separator
+		{u8"Bosanski",           "bs_BA"},
+		{u8"简体中文",            "zh_CN"},
+		{u8"Hrvatski",           "hr"},
+		{u8"Nederlands",         "nl"},
+		{u8"English",            "en"},
+		{u8"Deutsch",            "de"},
+		{u8"Italiano",           "it"},
+		{u8"日本語",              "ja"},
+		{u8"한국인",              "ko"},
+		{u8"Polski",             "pl"},
+		{u8"Português (Brasil)", "pt_BR"},
+		{u8"Русский",            "ru_RU"},
+		{u8"Español",            "es"},
+		{u8"Svenska",            "sv"},
+		{u8"Tiếng Việt",         "vi"},
 	};
 	for (const auto& [language, locale] : languageToLocaleMapping) {
 		if (language.isEmpty() && locale.isEmpty()) {
@@ -473,13 +482,15 @@ Window::Window(QWidget* parent)
 		exit(1);
 	}
 
+#ifndef VPKEDIT_BUILD_FOR_STRATA_SOURCE
 	if (!Options::get<bool>(OPT_DISABLE_STARTUP_UPDATE_CHECK)) {
 		this->checkForNewUpdate(true);
 	}
+#endif
 }
 
 void Window::newPackFile(std::string_view typeGUID, bool fromDirectory, const QString& startPath, const QString& name, const QString& extension) {
-	if (typeGUID != FPX::GUID && typeGUID != PAK::GUID && typeGUID != PCK::GUID && typeGUID != VPK::GUID && typeGUID != WAD3::GUID && typeGUID != ZIP::GUID) {
+	if (typeGUID != FPX::GUID && typeGUID != PAK::GUID && typeGUID != PCK::GUID && typeGUID != VPK::GUID && typeGUID != VPK_VTMB::GUID && typeGUID != WAD3::GUID && typeGUID != ZIP::GUID) {
 		return;
 	}
 	if (this->isWindowModified() && this->promptUserToKeepModifications()) {
@@ -526,6 +537,11 @@ void Window::newPackFile(std::string_view typeGUID, bool fromDirectory, const QS
 		if (auto* vpk = dynamic_cast<VPK*>(out.get())) {
 			vpk->setChunkSize(options->vpk_chunkSize);
 		}
+	} else if (typeGUID == VPK_VTMB::GUID) {
+		const auto basePath = std::filesystem::path{packFilePath.toLocal8Bit().constData()};
+		std::string packFilePathStr = basePath.parent_path().string() + "/pack000" + std::string{VPK_VTMB_EXTENSION};
+		packFilePath = packFilePathStr.c_str();
+		out = VPK_VTMB::create(packFilePathStr);
 	} else if (typeGUID == WAD3::GUID) {
 		out = WAD3::create(packFilePath.toLocal8Bit().constData());
 	} else if (typeGUID == ZIP::GUID) {
@@ -619,6 +635,10 @@ void Window::newPCK(bool fromDirectory, const QString& startPath) {
 
 void Window::newVPK(bool fromDirectory, const QString& startPath) {
 	return this->newPackFile(VPK::GUID, fromDirectory, startPath, "VPK", ".vpk");
+}
+
+void Window::newVPK_VTMB(bool fromDirectory, const QString& startPath) {
+	return this->newPackFile(VPK_VTMB::GUID, fromDirectory, startPath, "VPK (V:TMB)", ".vpk");
 }
 
 void Window::newWAD3(bool fromDirectory, const QString& startPath) {
@@ -1152,7 +1172,7 @@ void Window::renameDir(const QString& oldPath, const QString& newPath_) {
 		}
 	});
 
-	QProgressDialog progressDialog(tr("Renaming folder... Aborting this process will not roll back changes made so far."), tr("Abort"), 0, entriesToRename.size(), this);
+	QProgressDialog progressDialog(tr("Renaming folder... Aborting this process will not roll back changes made so far."), tr("Abort"), 0, static_cast<int>(entriesToRename.size()), this);
 	progressDialog.setWindowTitle(tr("Rename Folder"));
 	progressDialog.setWindowModality(Qt::WindowModal);
 	for (const auto& [path, entry] : entriesToRename) {
@@ -1685,9 +1705,10 @@ bool Window::writeEntryToFile(const QString& entryPath, const QString& filepath)
 void Window::resetStatusBar() {
 	// hack: replace the name of the pack file with something unique and substitute
 	// it back later to avoid messing with it when doing translation substitutions
+	static constexpr auto* PACK_FILE_NAME_REPLACEMENT = "\03383E7593B3B494FE0873C42BC3FC88DC5\033";
 	QString packFileStatus(std::string{*this->packFile}.c_str());
 	packFileStatus
-		.replace(this->packFile->getTruncatedFilename().c_str(), "83E7593B3B494FE0873C42BC3FC88DC5")
+		.replace(this->packFile->getTruncatedFilename().c_str(), PACK_FILE_NAME_REPLACEMENT)
 		.replace("AppID", tr("AppID"))
 		.replace("App Version", tr("App Version"))
 		.replace("Godot Version", tr("Godot Version"))
@@ -1696,7 +1717,7 @@ void Window::resetStatusBar() {
 		.replace("Addon Name:", tr("Addon Name:"))
 		.replace("Embedded", tr("Embedded"))
 		.replace("Encrypted", tr("Encrypted"))
-		.replace("83E7593B3B494FE0873C42BC3FC88DC5", this->packFile->getTruncatedFilename().c_str());
+		.replace(PACK_FILE_NAME_REPLACEMENT, this->packFile->getTruncatedFilename().c_str());
 	this->statusText->setText(' ' + tr("Loaded") + ' ' + packFileStatus);
 	this->statusText->show();
 	this->statusProgressBar->hide();
@@ -1747,7 +1768,7 @@ void ScanSteamGamesWorker::run() {
 
 	// Add Steam games
 	for (auto appID : steam.getInstalledApps()) {
-		if (!steam.isAppUsingSourceEngine(appID) && !steam.isAppUsingSource2Engine(appID)) {
+		if (!steam.isAppUsingGoldSrcEngine(appID) && !steam.isAppUsingSourceEngine(appID) && !steam.isAppUsingSource2Engine(appID)) {
 			continue;
 		}
 		sourceGames.emplace_back(

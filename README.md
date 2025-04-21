@@ -29,26 +29,29 @@ Please read [this file](https://github.com/craftablescience/VPKEdit/blob/main/IN
 
 - Supported file formats:
 
-  | Format | Description                                       | Create | Read | Write |
-  |--------|---------------------------------------------------|:------:|:----:|:-----:|
-  | 007    | Asset pack (007 - Nightfire)                      |   ❌    |  ✅   |   ❌   |
-  | BMZ    | Bonus Map Zip (Source Engine)                     |   ✅    |  ✅   |   ✅   |
-  | BSP    | Source 1 Map                                      |  N/A   |  ✅   |   ✅   |
-  | FPX    | VPK modification (Tactical Intervention)          |   ✅    |  ✅   |   ✅   |
-  | GCF    | Game Cache File (Pre-SteamPipe Steam games)       |   ❌    |  ✅   |   ❌   |
-  | GMA    | Garry's Mod Addon                                 |   ❌    |  ✅   |   ✅   |
-  | OL     | Worldcraft Object Library                         |   ❌    |  ✅   |   ❌   |
-  | ORE    | Unknown acronym (Narbacular Drop)                 |   ❌    |  ✅   |   ❌   |
-  | PAK    | PAcK file (Quake, original Half-Life, HROT, etc.) |   ✅    |  ✅   |   ✅   |
-  | PCK    | Godot PaCK file (Standalone or embedded)          |   ✅    |  ✅   |   ✅   |
-  | PK3    | Pack v3 (Quake II)                                |   ✅    |  ✅   |   ✅   |
-  | PK4    | Pack v4 (Quake IV, Doom 3)                        |   ✅    |  ✅   |   ✅   |
-  | VPK    | Vampire PacK file (V:TMB)                         | 〰️[^1] |  ✅   |   ✅   |
-  | VPK    | Valve PacK file (Source Engine)                   |   ✅    |  ✅   |   ✅   |
-  | WAD    | Where's All the Data (GoldSrc Engine)             |   ✅    |  ✅   |   ✅   |
-  | ZIP    | ZIP file                                          |   ✅    |  ✅   |   ✅   |
-
-  [^1]: Only supported in the CLI interface.
+  | Format   | Description                                       | Create | Read | Write |
+  |----------|---------------------------------------------------|:------:|:----:|:-----:|
+  | 007      | Asset pack (007 - Nightfire)                      |   ❌    |  ✅   |   ❌   |
+  | BEE_PACK | BEE2.4 Package                                    |   ✅    |  ✅   |   ✅   |
+  | BMZ      | Bonus Map Zip (Source Engine)                     |   ✅    |  ✅   |   ✅   |
+  | BSP      | Source 1 Map                                      |  N/A   |  ✅   |   ✅   |
+  | FPX      | VPK modification (Tactical Intervention)          |   ✅    |  ✅   |   ✅   |
+  | GCF      | Game Cache File (Pre-SteamPipe Steam games)       |   ❌    |  ✅   |   ❌   |
+  | GMA      | Garry's Mod Addon                                 |   ❌    |  ✅   |   ✅   |
+  | HOG      | Unknown acronym (Descent)                         |   ❌    |  ✅   |   ❌   |
+  | OL       | Worldcraft Object Library                         |   ❌    |  ✅   |   ❌   |
+  | ORE      | Unknown acronym (Narbacular Drop)                 |   ❌    |  ✅   |   ❌   |
+  | PAK      | PAcK file (Quake, original Half-Life, HROT, etc.) |   ✅    |  ✅   |   ✅   |
+  | PCK      | Godot PaCK file (Standalone or embedded)          |   ✅    |  ✅   |   ✅   |
+  | PK3      | PacK v3 (Quake II)                                |   ✅    |  ✅   |   ✅   |
+  | PK4      | PacK v4 (Quake IV, Doom 3)                        |   ✅    |  ✅   |   ✅   |
+  | PKZ      | PacK file (Quake II RTX)                          |   ✅    |  ✅   |   ✅   |
+  | VPK      | Valve PacK file (Source Engine)                   |   ✅    |  ✅   |   ✅   |
+  | VPK      | Vampire PacK file (V:TMB)                         |   ✅    |  ✅   |   ✅   |
+  | VPP      | Volition Pack file (Red Faction, Saints Row)      |   ❌    |  ✅   |   ❌   |
+  | WAD      | Where's All the Data (GoldSrc Engine)             |   ✅    |  ✅   |   ✅   |
+  | XZP      | Xbox ZiP (Xbox Half-Life 2)                       |   ❌    |  ✅   |   ❌   |
+  | ZIP      | ZIP file                                          |   ✅    |  ✅   |   ✅   |
 
 - Preview files contained within the pack file without extracting them:
   - Audio
@@ -56,26 +59,20 @@ Please read [this file](https://github.com/craftablescience/VPKEdit/blob/main/IN
   - KeyValues files (text files with syntax highlighting)
   - Images
   - Source 1 Textures
+    - Prop lightmaps
+    - Troika textures
+    - Valve textures for both PC and console
   - Source 1 Models
   - Source 1 DMX files (particles, SFM sessions, etc.)
-  - Source 1 PPL files (prop lightmaps)
 - Create pack files of any version from scratch or an existing folder
 - Add and remove files and folders from writable pack files
+  - Directly edit text files within writable pack files
 - Extract files and folders from readable pack files
 - Switch version of existing VPKs
-- Native Linux compatibility
-- User interface translated to the following languages ([support the translation effort here](https://poeditor.com/join/project/yxR9MLc9X2)):
-  - Bosnian
-  - Chinese (simplified)
-  - Dutch
-  - Italian
-  - Japanese
-  - Korean
-  - Polish
-  - Portuguese (Brazil)
-  - Russian
-  - Spanish
-  - Swedish
+- Native Linux builds
+  - Packaged for Debian, Arch, NixOS; standalone builds available
+- User interface translated to the following languages ([support the translation effort here](https://poeditor.com/join/project/yxR9MLc9X2)):<br/>
+  🇧🇦 🇨🇳 🇭🇷 🇳🇱 🇩🇪 🇮🇹 🇯🇵 🇰🇷 🇵🇱 🇧🇷 🇷🇺 🇪🇸 🇸🇪 🇻🇳
 
 Please read [this file](https://github.com/craftablescience/VPKEdit/blob/main/CONTROLS.md) to see all keyboard shortcuts.
 

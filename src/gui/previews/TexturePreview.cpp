@@ -17,6 +17,7 @@
 #include <QWheelEvent>
 
 #include "../utility/ImageLoader.h"
+#include "../FileViewer.h"
 
 using namespace vtfpp;
 
@@ -64,6 +65,18 @@ QString vtfFormatToString(ImageFormat format) {
 		{ RGBA1010102, "RGBA1010102" },
 		{ BGRA1010102, "BGRA1010102" },
 		{ R16F, "R16F" },
+		{ CONSOLE_BGRX8888_LINEAR, "CONSOLE_BGRX8888_LINEAR" },
+		{ CONSOLE_RGBA8888_LINEAR, "CONSOLE_RGBA8888_LINEAR" },
+		{ CONSOLE_ABGR8888_LINEAR, "CONSOLE_ABGR8888_LINEAR" },
+		{ CONSOLE_ARGB8888_LINEAR, "CONSOLE_ARGB8888_LINEAR" },
+		{ CONSOLE_BGRA8888_LINEAR, "CONSOLE_BGRA8888_LINEAR" },
+		{ CONSOLE_RGB888_LINEAR, "CONSOLE_RGB888_LINEAR" },
+		{ CONSOLE_BGR888_LINEAR, "CONSOLE_BGR888_LINEAR" },
+		{ CONSOLE_BGRX5551_LINEAR, "CONSOLE_BGRX5551_LINEAR" },
+		{ CONSOLE_I8_LINEAR, "CONSOLE_I8_LINEAR" },
+		{ CONSOLE_RGBA16161616_LINEAR, "CONSOLE_RGBA16161616_LINEAR" },
+		{ CONSOLE_BGRX8888_LE, "CONSOLE_BGRX8888_LE" },
+		{ CONSOLE_BGRA8888_LE, "CONSOLE_BGRA8888_LE" },
 		{ R8, "R8" },
 		{ BC7, "BC7" },
 		{ BC6H, "BC6H" },
@@ -240,7 +253,18 @@ bool VTFWidget::hasAlpha() const {
 }
 
 QString VTFWidget::getVersion() const {
-	return QString::number(this->vtf->getMajorVersion()) + "." + QString::number(this->vtf->getMinorVersion());
+	switch (this->vtf->getPlatform()) {
+		case VTF::PLATFORM_UNKNOWN:
+		case VTF::PLATFORM_PC:
+			return QString::number(this->vtf->getMajorVersion()) + "." + QString::number(this->vtf->getMinorVersion());
+		case VTF::PLATFORM_PS3_PORTAL2:
+			return "PS3 (v7.5)";
+		case VTF::PLATFORM_PS3_ORANGEBOX:
+			return "PS3 (v7.4)";
+		case VTF::PLATFORM_X360:
+			return "X360 (v7.4)";
+	}
+	return "";
 }
 
 QString VTFWidget::getFormat() const {
@@ -323,8 +347,9 @@ void VTFWidget::decodeImage(int mip, int frame, int face, int slice, bool alpha)
 	}
 }
 
-TexturePreview::TexturePreview(QWidget* parent)
-		: QWidget(parent) {
+TexturePreview::TexturePreview(QWidget* parent, FileViewer* fileViewer_)
+		: QWidget(parent)
+		, fileViewer(fileViewer_) {
 	auto* layout = new QHBoxLayout(this);
 	layout->setContentsMargins(0,0,0,0);
 
@@ -507,6 +532,21 @@ void TexturePreview::setPPLData(const std::vector<std::byte>& data) const {
 
 	this->ppl->setData(data);
 	this->setData(this->ppl);
+}
+
+void TexturePreview::setTTXData(const std::vector<std::byte>& tthData, const std::vector<std::byte>& ttzData) const {
+	this->image->hide();
+	this->svg->hide();
+	this->ppl->hide();
+	this->vtf->show();
+
+	TTX ttx{tthData, ttzData};
+	if (!ttx) {
+		this->fileViewer->showFileLoadErrorPreview();
+	}
+
+	this->vtf->setData(ttx.getVTF().bake());
+	this->setData(this->vtf);
 }
 
 void TexturePreview::setVTFData(const std::vector<std::byte>& data) const {
