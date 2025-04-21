@@ -10,6 +10,3 @@
 [submodule "src/gui/thirdparty/miniaudio"]
 	path = src/gui/thirdparty/miniaudio
 	url = https://github.com/mackron/miniaudio
-[submodule "src/shared/thirdparty/sourcepp"]
-	path = src/shared/thirdparty/sourcepp
-	url = https://github.com/craftablescience/sourcepp
